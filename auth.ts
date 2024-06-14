@@ -20,15 +20,22 @@ export const {
     },
     events: {
       async linkAccount({ user }) {
+        if (!user.id) {
+          throw new Error("User ID is undefined");
+        }
         await db.user.update({
           where: { id: user.id },
-          data: { emailVerified: new Date()}
-        })
+          data: { emailVerified: new Date() }
+        });
       }
     },
     callbacks: {
       async signIn({ user, account}) {
         if (account?.provider !== "credentials") return true;
+
+        if (!user.id) {
+          throw new Error("User ID is undefined");
+        }
 
         const existingUser = await getUserById(user.id);
 

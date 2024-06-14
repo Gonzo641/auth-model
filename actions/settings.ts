@@ -15,13 +15,13 @@ export const settings = async (
 ) => {
     const user = await currentUser();
 
-    if (!user) {
+    if (!user || !user.id) {
         return { error: "Unauthorized" };
     }
 
     const dbUser = await getUserById(user.id);
 
-    if (!dbUser) {
+    if (!dbUser || !dbUser.id) {
         return { error: "Unauthorized" };
     }
 
@@ -45,7 +45,7 @@ export const settings = async (
 
         await sendVerificationEmail(
             verificationToken.email,
-            verificationToken.token,
+            verificationToken.token
         );
 
         return { success: "Verification email sent!"};
@@ -54,7 +54,7 @@ export const settings = async (
     if (values.password && values.newPassword && dbUser.password) {
         const passwordsMatch = await bcrypt.compare(
             values.password,
-            dbUser.password,
+            dbUser.password
         );
 
         if (!passwordsMatch) {
